@@ -76,43 +76,4 @@ public class RedditService {
             }
         });
     }
-
-    public static Completable refreshToken(final RedditClient reddit, final Credentials credentials,
-                                          final String refreshToken) {
-        return Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(CompletableEmitter e) throws Exception {
-                OAuthHelper helper = reddit.getOAuthHelper();
-                helper.setRefreshToken(refreshToken);
-
-                try {
-                    OAuthData oAuthData = helper.refreshToken(credentials);
-                    reddit.authenticate(oAuthData);
-                    e.onComplete();
-                } catch (Exception ex) {
-                    if (!e.isDisposed()) {
-                        e.onError(ex);
-                    }
-                }
-            }
-        });
-    }
-
-    public static Completable deAuthenticate(final RedditClient reddit, final Credentials credentials) {
-        return Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(CompletableEmitter e) throws Exception {
-                OAuthHelper helper = reddit.getOAuthHelper();
-                try {
-                    helper.revokeAccessToken(credentials);
-                    reddit.deauthenticate();
-                    e.onComplete();
-                } catch (Exception ex) {
-                    if (!e.isDisposed()) {
-                        e.onError(ex);
-                    }
-                }
-            }
-        });
-    }
 }
