@@ -2,7 +2,6 @@ package com.gmail.jorgegilcavazos.androidjrawsample;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.auth.AuthenticationManager;
-import net.dean.jraw.http.SubmissionRequest;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthHelper;
@@ -17,29 +16,22 @@ import io.reactivex.SingleOnSubscribe;
 
 public class RedditService {
 
-    public static Single<Submission> getSubmission(
-            final RedditClient redditClient,
-            final String submissionId) {
+    public static Single<Submission> getSubmission(final RedditClient redditClient) {
         return Single.create(new SingleOnSubscribe<Submission>() {
             @Override
             public void subscribe(SingleEmitter<Submission> e) throws Exception {
-                SubmissionRequest.Builder builder = new SubmissionRequest.Builder(submissionId);
-
-                SubmissionRequest submissionRequest = builder.build();
-
                 try {
-                    e.onSuccess(redditClient.getSubmission(submissionRequest));
+                    e.onSuccess(redditClient.getRandomSubmission());
                 } catch (Exception ex) {
-                    if (!e.isDisposed()) {
-                        e.onError(ex);
-                    }
+                    e.onError(ex);
                 }
             }
         });
     }
 
-    public static Completable userlessAuthentication(final RedditClient reddit,
-                                              final Credentials credentials) {
+    public static Completable userlessAuthentication(
+            final RedditClient reddit,
+            final Credentials credentials) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(CompletableEmitter e) throws Exception {
@@ -48,16 +40,16 @@ public class RedditService {
                     reddit.authenticate(oAuthData);
                     e.onComplete();
                 } catch (Exception ex) {
-                    if (!e.isDisposed()) {
-                        e.onError(ex);
-                    }
+                    e.onError(ex);
                 }
             }
         });
     }
 
-    public static Completable userAuthentication(final RedditClient reddit, final Credentials credentials,
-                                          final String url) {
+    public static Completable userAuthentication(
+            final RedditClient reddit,
+            final Credentials credentials,
+            final String url) {
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(CompletableEmitter e) throws Exception {
@@ -69,9 +61,48 @@ public class RedditService {
                     AuthenticationManager.get().onAuthenticated(oAuthData);
                     e.onComplete();
                 } catch (Exception ex) {
-                    if (!e.isDisposed()) {
-                        e.onError(ex);
-                    }
+                    e.onError(ex);
+                }
+            }
+        });
+    }
+
+    public static Completable refreshToken(final Credentials credentials) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter e) throws Exception {
+                try {
+                    AuthenticationManager.get().refreshAccessToken(credentials);
+                    e.onComplete();
+                } catch (Exception ex) {
+                    e.onError(ex);
+                }
+            }
+        });
+    }
+
+    public static Completable logout(final Credentials credentials) {
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter e) throws Exception {
+                try {
+                    AuthenticationManager.get().getRedditClient().getOAuthHelper()
+                            .revokeAccessToken(credentials);
+                    AuthenticationManager.get().getRedditClient().getOAuthHelper()
+                            .revokeRefreshToken(credentials);
+                    // Calling deauthenticate() isn't really necessary, since revokeAccessToken()
+                    // already calls it.
+                    // AuthenticationManager.get().getRedditClient().deauthenticate();
+
+                    // As of JRAW 9.0.0, revoking the access/refresh token does not update the
+                    // auth state to NONE (it instead remains as NEEDS_REFRESH), so to completely
+                    // restart the session to a blank state you should re-instantiate the
+                    // AuthenticationManager. See https://github.com/mattbdean/JRAW/issues/196
+
+                    // AuthenticationManager.get().init(...., ....); uncomment this line.
+                    e.onComplete();
+                } catch (Exception ex) {
+                    e.onError(ex);
                 }
             }
         });

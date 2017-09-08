@@ -17,9 +17,6 @@ import java.net.URL;
 import io.reactivex.observers.DisposableCompletableObserver;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String CLIENT_ID = "XDtA2eYVKp1wWA";
-    private static final String REDIRECT_URL = "http://localhost/authorize_callback";
-
     WebView webView;
 
     @Override
@@ -53,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private  URL getAuthorizationUrl() {
         OAuthHelper oAuthHelper = AuthenticationManager.get().getRedditClient().getOAuthHelper();
-        Credentials credentials = Credentials.installedApp(CLIENT_ID, REDIRECT_URL);
+        Credentials credentials = ((MyApplication) getApplication()).getInstalledAppCredentials();
         String[] scopes = {"identity", "edit", "flair", "mysubreddits", "read", "vote",
                 "submit", "subscribe", "history", "save"};
         return oAuthHelper.getAuthorizationUrl(credentials, true, true, scopes);
