@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import net.dean.jraw.auth.AuthenticationManager;
 import net.dean.jraw.http.oauth.Credentials;
@@ -42,6 +43,13 @@ public class LoginActivity extends AppCompatActivity {
                     webView.stopLoading();
                     setResult(RESULT_OK, new Intent().putExtra("RESULT_URL", url));
                     finish();
+                } else if (url.contains("error=")) {
+                    Toast.makeText(
+                            LoginActivity.this,
+                            getString(R.string.login_access_denied_error),
+                            Toast.LENGTH_LONG
+                    ).show();
+                    webView.loadUrl(getAuthorizationUrl().toExternalForm());
                 }
             }
         });
