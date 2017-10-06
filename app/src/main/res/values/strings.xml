@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">AndroidJrawSample</string>
+
+    <!-- LoginActivity Strings -->
+    <string name="login_access_denied_error">
+        You must click on \"allow\" to complete the sign-in process.
+        The app cannot function correctly without the requested permissions.
+    </string>
+
 </resources>
