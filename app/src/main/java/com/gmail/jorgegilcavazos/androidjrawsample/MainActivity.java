@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.LENGTH_SHORT).show();
         } else {
             Credentials credentials = ((MyApplication) getApplicationContext())
-                    .getUserlessAppCredentials();
+                    .getInstalledAppCredentials();
             disposables.add(RedditService.refreshToken(credentials)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.LENGTH_SHORT).show();
         } else {
             Credentials credentials = ((MyApplication) getApplicationContext())
-                    .getUserlessAppCredentials();
+                    .getInstalledAppCredentials();
 
             disposables.add(RedditService.logout(credentials)
                     .subscribeOn(Schedulers.io())
