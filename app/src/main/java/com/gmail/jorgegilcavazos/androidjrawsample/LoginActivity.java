@@ -15,8 +15,6 @@ import net.dean.jraw.http.oauth.OAuthHelper;
 
 import java.net.URL;
 
-import io.reactivex.observers.DisposableCompletableObserver;
-
 public class LoginActivity extends AppCompatActivity {
     WebView webView;
 
