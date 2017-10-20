@@ -1,6 +1,16 @@
 # JRAW-Android-Sample
 
+### Registering your client
+
+Before using this, you must register the client of the appropriate type by going 
+[here](https://www.reddit.com/prefs/apps/) and "Creating your application". 
+If it's a web app or a script, then you'll only be needing your "redirect uri" from here. 
+If it's of the "Installed App" type then you'll also need to provide the "Client ID" which is a 14 character key shown right under your Application's name and Type. 
+
 ### Authenticating your client
+
+First, open up MyApplication.java and plug-in your "redirect uri" and "client id" (if applicable). 
+*DO NOT* forget this step, else you will see a "Bad Request" error while attempting a login. 
 
 Initialize the AuthenticationManager in your MainActivity's onCreate() method:
 
